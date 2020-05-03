@@ -125,6 +125,8 @@ void Results(std::string pathString[], int distStorage[], int nodesAmount, int s
 
 	for (int itrNodes = 0; itrNodes < nodesAmount; itrNodes++)
 	{
+		std::cout << "Calculating\n" << std::endl;
+
 		if (distStorage[itrNodes] == infinity)
 		{
 			rFile << itrNodes << "-> inf" << std::endl;
