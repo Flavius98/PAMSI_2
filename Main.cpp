@@ -1,17 +1,17 @@
 #include <iostream>
 
 #include "Graph.h"
-#include "Bellmanalg.h"
+#include "BellmanAlg.h"
 
 template<typename T>
-std::string Driver(int(&verticlesStorage)[5], double(&densityStorage)[4], int loops)
+std::string Initiate(int(&vertStorage)[5], double(&denStorage)[4], int loops)
 {
 	std::string result;
-	for (auto density : densityStorage)
-	{
-		for (auto verticles : verticlesStorage)
+	for (auto density : denStorage)
+		for (auto verticles : vertStorage)
 		{
 			double accumulatedTime = 0;
+
 			for (int iterLoops = 0; iterLoops < loops; iterLoops++)
 			{
 				std::shared_ptr<T> graph = std::make_shared<T>(verticles, density);
@@ -24,18 +24,15 @@ std::string Driver(int(&verticlesStorage)[5], double(&densityStorage)[4], int lo
 
 			result += std::to_string((accumulatedTime * 100 / loops) + 1);
 			result += ",";
-
-			std::cout << verticles << " verticles done " << std::endl;
 		}
-		std::cout << density << " density done " << std::endl;
-	}
+
 	return result;
 }
 
 int main()
 {
-	int verticesStorage[5] = { 5,10,30,50,100 };
-	double densityStorage[4] = { 0.25,0.5,0.75,1.00 };
+	int vertStorage[5] = {5,10, 30, 50, 100};
+	double denStorage[4] = {0.25, 0.5, 0.75, 1.00};
 	int loop = 100;
 
 	std::ofstream file("Times.txt");
@@ -47,13 +44,10 @@ int main()
 		return 1;
 	}
 
-	file << Driver<List>(verticesStorage, densityStorage, loop);
-	std::cout << "LIST DONE\n" << std::endl;
-	std::cout << " ";
-
-	file << Driver<Matrix>(verticesStorage, densityStorage, loop);
-	std::cout << "MATRIX DONE" << std::endl;
+	file << Initiate<List>(vertStorage, denStorage, loop);
+	file << Initiate<Matrix>(vertStorage, denStorage, loop);
 
 	file.close();
+
 	return 0;
 }

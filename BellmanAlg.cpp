@@ -4,12 +4,12 @@ double BellmanAlg(std::shared_ptr<List> workingGraph, int startingNode)
 {
 	std::string* pathStorage = new std::string[workingGraph->GetNodes()];
 	auto startTime = std::chrono::high_resolution_clock::now();
-	int* distanceStorage = new int[workingGraph->GetNodes()];
+	int* distStorage = new int[workingGraph->GetNodes()];
 
 	for (int iterNodes = 0; iterNodes < workingGraph->GetNodes(); iterNodes++)
-		distanceStorage[iterNodes] = infinity;
+		distStorage[iterNodes] = infinity;
 
-	distanceStorage[startingNode] = 0;
+	distStorage[startingNode] = 0;
 
 	for (int iterNodes = 1; iterNodes < workingGraph->GetNodes(); iterNodes++)
 		for (int iterEdges = 0; iterEdges < workingGraph->GetEdges(); iterEdges++)
@@ -18,8 +18,8 @@ double BellmanAlg(std::shared_ptr<List> workingGraph, int startingNode)
 			int temNodeEnd = workingGraph->GetEdge()[iterEdges].nodeEnd;
 			int temValue = workingGraph->GetEdge()[iterEdges].value;
 
-			if (distanceStorage[temNodeStart] + temValue < distanceStorage[temNodeEnd])
-				distanceStorage[temNodeEnd] = distanceStorage[temNodeStart] + temValue;
+			if (distStorage[temNodeStart] + temValue < distStorage[temNodeEnd])
+				distStorage[temNodeEnd] = distStorage[temNodeStart] + temValue;
 
 			pathStorage[temNodeEnd].clear();
 			pathStorage[temNodeEnd].append(pathStorage[temNodeStart] + std::to_string(temNodeStart) + "->");
@@ -32,24 +32,24 @@ double BellmanAlg(std::shared_ptr<List> workingGraph, int startingNode)
 			int temNodeEnd = workingGraph->GetEdge()[iterEdges].nodeEnd;
 			int temValue = workingGraph->GetEdge()[iterEdges].value;
 
-			if (distanceStorage[temNodeStart] + temValue < distanceStorage[temNodeEnd])
+			if (distStorage[temNodeStart] + temValue < distStorage[temNodeEnd])
 			{
-				if (distanceStorage[temNodeStart] > infinity / 2)
-					distanceStorage[temNodeStart] = infinity;
+				if (distStorage[temNodeStart] > infinity / 2)
+					distStorage[temNodeStart] = infinity;
 
 				else
-					distanceStorage[temNodeEnd] = negInfinity;
+					distStorage[temNodeEnd] = negInfinity;
 			}
 
-			else if (distanceStorage[temNodeStart] > infinity / 2)
-				distanceStorage[temNodeStart] = infinity;
+			else if (distStorage[temNodeStart] > infinity / 2)
+				distStorage[temNodeStart] = infinity;
 		}
 
 	auto endTime = std::chrono::high_resolution_clock::now();
 
-	Results(std::move(pathStorage), std::move(distanceStorage), workingGraph->GetNodes(), startingNode);
+	Results(std::move(pathStorage), std::move(distStorage), workingGraph->GetNodes(), startingNode);
 	delete[] pathStorage;
-	delete[] distanceStorage;
+	delete[] distStorage;
 
 	return std::chrono::duration<double, std::milli>(endTime - startTime).count();
 }
@@ -58,12 +58,12 @@ double BellmanAlg(std::shared_ptr<Matrix> workingGraph, int startingNode)
 {
 	std::string* pathStorage = new std::string[workingGraph->GetNodes()];
 	auto startTime = std::chrono::high_resolution_clock::now();
-	int* distanceStorage = new int[workingGraph->GetNodes()];
+	int* distStorage = new int[workingGraph->GetNodes()];
 
 	for (int iterNodes = 0; iterNodes < workingGraph->GetNodes(); iterNodes++)
-		distanceStorage[iterNodes] = infinity;
+		distStorage[iterNodes] = infinity;
 
-	distanceStorage[startingNode] = 0;
+	distStorage[startingNode] = 0;
 
 	for (int iterNodes = 1; iterNodes < workingGraph->GetNodes(); iterNodes++)
 		for (int iterNodeCell = 0; iterNodeCell < workingGraph->GetNodes(); iterNodeCell++)
@@ -73,9 +73,9 @@ double BellmanAlg(std::shared_ptr<Matrix> workingGraph, int startingNode)
 				int temNodeEnd = iterNodeCollumn;
 				int temValue = workingGraph->GetValue(iterNodeCell, iterNodeCollumn);
 
-				if (distanceStorage[temNodeStart] + temValue < distanceStorage[temNodeEnd])
+				if (distStorage[temNodeStart] + temValue < distStorage[temNodeEnd])
 				{
-					distanceStorage[temNodeEnd] = distanceStorage[startingNode] + temValue;
+					distStorage[temNodeEnd] = distStorage[startingNode] + temValue;
 					pathStorage[temNodeEnd].clear();
 					pathStorage[temNodeEnd].append(pathStorage[temNodeStart] + std::to_string(temNodeStart) + "->");
 				}
@@ -89,87 +89,87 @@ double BellmanAlg(std::shared_ptr<Matrix> workingGraph, int startingNode)
 				int temNodeEnd = iterNodeCollumn;
 				int temValue = workingGraph->GetValue(iterNodeCell, iterNodeCollumn);
 
-				if (distanceStorage[temNodeStart] + temValue < distanceStorage[temNodeEnd])
+				if (distStorage[temNodeStart] + temValue < distStorage[temNodeEnd])
 				{
-					if (distanceStorage[temNodeStart] > infinity / 2)
-						distanceStorage[temNodeStart] = infinity;
+					if (distStorage[temNodeStart] > infinity / 2)
+						distStorage[temNodeStart] = infinity;
 
 					else if (temValue == infinity)
 						continue;
 
 					else
-						distanceStorage[temNodeEnd] = negInfinity;
+						distStorage[temNodeEnd] = negInfinity;
 				}
 
-				else if (distanceStorage[temNodeStart] > infinity / 2)
-					distanceStorage[temNodeStart] = infinity;
+				else if (distStorage[temNodeStart] > infinity / 2)
+					distStorage[temNodeStart] = infinity;
 			}
 
 	auto endTime = std::chrono::high_resolution_clock::now();
 
-	Results(std::move(pathStorage), std::move(distanceStorage), workingGraph->GetNodes(), startingNode);
+	Results(std::move(pathStorage), std::move(distStorage), workingGraph->GetNodes(), startingNode);
 
 	delete[] pathStorage;
-	delete[] distanceStorage;
+	delete[] distStorage;
 
 	return std::chrono::duration<double, std::milli>(endTime - startTime).count();
 }
 
-void Results(std::string pathString[], int distanceStorage[], int nodesAmount, int startingNode)
+void Results(std::string pathString[], int distStorage[], int nodesAmount, int startingNode)
 {
-	std::ofstream resoultsFile("Results.txt");
+	std::ofstream rFile("Results.txt");
 	std::cout << "\n           Results            \n\n";
 	std::cout << "Starting node was : " << startingNode << std::endl;
-	resoultsFile << "\n           Results            \n\n";
-	resoultsFile << "Starting node was : " << startingNode << std::endl;
+	rFile << "\n           Results            \n\n";
+	rFile << "Starting node was : " << startingNode << std::endl;
 
 	for (int itrNodes = 0; itrNodes < nodesAmount; itrNodes++)
 	{
-		if (distanceStorage[itrNodes] == infinity)
+		if (distStorage[itrNodes] == infinity)
 		{
 			std::cout << itrNodes << "-> inf" << std::endl;
-			resoultsFile << itrNodes << "-> inf" << std::endl;
+			rFile << itrNodes << "-> inf" << std::endl;
 
 			continue;
 		}
 
-		else if (distanceStorage[itrNodes] == negInfinity)
+		else if (distStorage[itrNodes] == negInfinity)
 		{
 			std::cout << itrNodes << "-> -inf" << std::endl;
-			resoultsFile << itrNodes << "-> -inf" << std::endl;
+			rFile << itrNodes << "-> -inf" << std::endl;
 
 			continue;
 		}
 		else
 		{
-			std::cout << itrNodes << "->" << distanceStorage[itrNodes] << std::endl;
-			resoultsFile << itrNodes << "->" << distanceStorage[itrNodes] << std::endl;
+			std::cout << itrNodes << "->" << distStorage[itrNodes] << std::endl;
+			rFile << itrNodes << "->" << distStorage[itrNodes] << std::endl;
 		}
 
 		std::cout << "  ";
-		resoultsFile << "  ";
+		rFile << "  ";
 
-		if ((distanceStorage[itrNodes] >= 100 && distanceStorage[itrNodes] < 1000) || (-100 > distanceStorage[itrNodes] && distanceStorage[itrNodes] <= -10))
+		if ((distStorage[itrNodes] >= 100 && distStorage[itrNodes] < 1000) || (-100 > distStorage[itrNodes] && distStorage[itrNodes] <= -10))
 		{
 			std::cout << " The shortest path: " << pathString[itrNodes] << itrNodes;
-			resoultsFile << " The shortest path: " << pathString[itrNodes] << itrNodes;
+			rFile << " The shortest path: " << pathString[itrNodes] << itrNodes;
 		}
-		else if (0 <= distanceStorage[itrNodes] && distanceStorage[itrNodes] < 10)
+		else if (0 <= distStorage[itrNodes] && distStorage[itrNodes] < 10)
 		{
 			std::cout << "   The shortest path: " << pathString[itrNodes] << itrNodes;
-			resoultsFile << "   The shortest path: " << pathString[itrNodes] << itrNodes;
+			rFile << "   The shortest path: " << pathString[itrNodes] << itrNodes;
 		}
-		else if ((distanceStorage[itrNodes] >= 10 && distanceStorage[itrNodes] < 100) || (-10 < distanceStorage[itrNodes] && distanceStorage[itrNodes] < 0))
+		else if ((distStorage[itrNodes] >= 10 && distStorage[itrNodes] < 100) || (-10 < distStorage[itrNodes] && distStorage[itrNodes] < 0))
 		{
 			std::cout << "  The shortest path: " << pathString[itrNodes] << itrNodes;
-			resoultsFile << "  The shortest path: " << pathString[itrNodes] << itrNodes;
+			rFile << "  The shortest path: " << pathString[itrNodes] << itrNodes;
 		}
 		else
 		{
 			std::cout << "The shortest path: " << pathString[itrNodes] << itrNodes;
-			resoultsFile << "The shortest path: " << pathString[itrNodes] << itrNodes;
+			rFile << "The shortest path: " << pathString[itrNodes] << itrNodes;
 		}
 		std::cout << std::endl;
 	}
-	resoultsFile << std::endl;
+	rFile << std::endl;
 }
