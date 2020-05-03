@@ -144,8 +144,6 @@ void Results(std::string pathString[], int distStorage[], int nodesAmount, int s
 		else
 			rFile << itrNodes << "->" << distStorage[itrNodes] << std::endl;
 
-
-		std::cout << "  ";
 		rFile << "  ";
 
 		if ((distStorage[itrNodes] >= 100 && distStorage[itrNodes] < 1000) || (-100 > distStorage[itrNodes] && distStorage[itrNodes] <= -10))
